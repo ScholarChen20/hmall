@@ -10,6 +10,6 @@ import java.util.List;
 @Component
 @ConfigurationProperties(prefix = "hm.auth")
 public class AuthProperties {
-    private List<String> includePaths;
-    private List<String> excludePaths;
+    private List<String> includePaths;// 需要认证的路径
+    private List<String> excludePaths; // 不需要认证的路径
 }

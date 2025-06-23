@@ -13,11 +13,20 @@ import java.security.KeyPair;
 @EnableConfigurationProperties(JwtProperties.class)
 public class SecurityConfig {
 
+    /**
+     * 密码加密器
+     * @return
+     */
     @Bean
     public PasswordEncoder passwordEncoder(){
         return new BCryptPasswordEncoder();
     }
 
+    /**
+     * RSA加密器
+     * @param properties
+     * @return
+     */
     @Bean
     public KeyPair keyPair(JwtProperties properties){
         // 获取秘钥工厂

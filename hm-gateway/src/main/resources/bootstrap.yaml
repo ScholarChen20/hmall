@@ -10,3 +10,28 @@ spring:
         file-extension: yaml
         shared-configs:
           - data-id: shared-log.yaml
+    gateway:
+      routes:
+         - id: user-service
+           uri: lb://user-service
+           predicates:
+             - Path=/users/**,/addresses/**
+         - id: item-service
+           uri: lb://item-service
+           predicates:
+             - Path=/items/**,/search/**
+         - id: trade-service
+           uri: lb://trade-service
+           predicates:
+             - Path=/orders/**
+         - id: pay-service
+           uri: lb://pay-service
+           predicates:
+             - Path=/pay-orders/**
+         - id: cart-service
+           uri: lb://cart-service
+           predicates:
+             - Path=/carts/**
+      default-filters:
+        - AddRequestHeader=True, anyone long-press like button will be rich
+        - PrintAny=1,2,3

@@ -18,21 +18,21 @@ import reactor.core.publisher.Mono;
 import java.util.List;
 
 @Component
-@RequiredArgsConstructor
+@RequiredArgsConstructor // 自动注入依赖对象
 public class AuthGlobalFilter implements GlobalFilter, Ordered {
 
-    private final AuthProperties authProperties;
+    private final AuthProperties authProperties; // 使用requireArgsConstructor注解，自动注入AuthProperties对象
 
-    private final JwtTool jwtTool;
+    private final JwtTool jwtTool; // JWT工具类
 
-    private final AntPathMatcher antPathMatcher = new AntPathMatcher();
+    private final AntPathMatcher antPathMatcher = new AntPathMatcher(); // 路径匹配器
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         // 1.获取request
         ServerHttpRequest request = exchange.getRequest();
         // 2.判断是否需要做登录拦截
-        if(isExclude(request.getPath().toString())){
+        if(isExclude(request.getPath().toString())){ // 需要做登录拦截的路径
             // 放行
             return chain.filter(exchange);
         }
@@ -49,22 +49,27 @@ public class AuthGlobalFilter implements GlobalFilter, Ordered {
         } catch (UnauthorizedException e)
         {
             // 拦截，设置响应状态码为401
-            ServerHttpResponse response = exchange.getResponse();
-            response.setStatusCode(HttpStatus.UNAUTHORIZED);
-            return response.setComplete();
+            ServerHttpResponse response = exchange.getResponse(); // 获取响应对象
+            response.setStatusCode(HttpStatus.UNAUTHORIZED); // 设置响应状态码为401
+            return response.setComplete(); // 返回响应对象, 结束请求
         }
         // 5.传递用户信息
         String userInfo = userId.toString();
-        ServerWebExchange swe = exchange.mutate()
+        ServerWebExchange swe = exchange.mutate() // 创建一个新的ServerWebExchange对象， 修饰其请求头，添加用户信息
                 .request(builder -> builder.header("user-info", userInfo))
                 .build();
         // 6.放行
         return chain.filter(swe);
     }
 
+    /**
+     * 判断是否需要做登录拦截
+     * @param path
+     * @return
+     */
     private boolean isExclude(String path) {
         for (String pathPattern : authProperties.getExcludePaths()) {
-            if (antPathMatcher.match(pathPattern, path)) {
+            if (antPathMatcher.match(pathPattern, path)) { //判断是否匹配到需要排除的路径
                 return true;
             }
         }

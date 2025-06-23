@@ -22,7 +22,6 @@ public class JwtTool {
 
     /**
      * 创建 access-token
-     *
      * @param userId 用户信息
      * @return access-token
      */

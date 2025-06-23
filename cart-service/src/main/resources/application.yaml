@@ -11,6 +11,8 @@ feign:
 #  sentinel:
 #    enabled: true
 hm:
+  cart:
+    max-items: 100 # 添加maxItems属性并设置默认值为100
   db:
     database: hm-cart
   swagger:
@@ -22,3 +24,5 @@ spring:
       transport:
         dashboard: localhost:8090 # sentinel的控制台地址
       http-method-specify: true # 是否设置请求方式作为资源名称
+  seata:
+    enabled: false # 禁用Seata以避免未配置导致的问题

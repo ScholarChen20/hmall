@@ -13,6 +13,11 @@ import java.util.List;
 
 @Component
 public class PrintAnyGatewayFilterFactory extends AbstractGatewayFilterFactory<PrintAnyGatewayFilterFactory.Config> {
+    /**
+     * 自定义过滤器工厂，用于打印任意参数。必须GatewayFilterFactory接口的实现类。
+     * @param config
+     * @return
+     */
     @Override
     public GatewayFilter apply(Config config) {
         return new OrderedGatewayFilter(new GatewayFilter(){
@@ -30,6 +35,10 @@ public class PrintAnyGatewayFilterFactory extends AbstractGatewayFilterFactory<P
         }, 1);
     }
 
+    /**
+     * 配置类，用于接收参数。
+     * 必须有默认构造函数。
+     */
     @Data
     public static class Config{
         private String a;
@@ -37,10 +46,17 @@ public class PrintAnyGatewayFilterFactory extends AbstractGatewayFilterFactory<P
         private String c;
     }
 
+    /**
+     * 构造函数，用于初始化配置类。将config字节码传递给父类，并初始化配置类。
+     */
     public PrintAnyGatewayFilterFactory() {
         super(Config.class);
     }
 
+    /**
+     * 重写shortcutFieldOrder方法，用于指定参数顺序。
+     * @return
+     */
     @Override
     public List<String> shortcutFieldOrder() {
         return List.of("a", "b", "c");
