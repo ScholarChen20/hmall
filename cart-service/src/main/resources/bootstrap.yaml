@@ -1,0 +1,23 @@
+spring:
+  application:
+    name: cart-service # 微服务名称
+  datasource:
+    url: jdbc:mysql://${hm.db.host}:3307/hm-cart?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&
+    username: root
+    password: ${hm.db.pw}
+  profiles:
+    active: dev
+  cloud:
+    nacos:
+      server-addr: 192.168.100.128:8848
+      config:
+        file-extension: yaml
+        shared-configs:
+          - data-id: shared-jdbc.yaml
+          - data-id: shared-log.yaml
+          - data-id: shared-swagger.yaml
+          - data-id: shared-seata.yaml
+#eureka:
+#  client:
+#    service-url:
+#      defaultZone: http://127.0.0.1:10086/eureka
