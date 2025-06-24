@@ -18,19 +18,19 @@ import java.util.Set;
 import java.util.concurrent.Executor;
 
 @Slf4j
-@Component
+@Component // 组件，自动装配，自动注入
 @RequiredArgsConstructor
 public class DynamicRouteLoader {
 
-    private final NacosConfigManager nacosConfigManager;
-    private final RouteDefinitionWriter writer;
+    private final NacosConfigManager nacosConfigManager;  // 注入nacos配置管理器
+    private final RouteDefinitionWriter writer; // 路由定义写入器
 
-    private final String dataId = "gateway-routes.json";
-    private final String group = "DEFAULT_GROUP";
+    private final String dataId = "gateway-routes.json"; // 配置文件名称
+    private final String group = "DEFAULT_GROUP"; // 配置文件分组
 
     private final Set<String> routeIds = new HashSet<>();
 
-    @PostConstruct
+    @PostConstruct   // 项目启动时执行
     public void initRouteConfigListener() throws NacosException {
         // 1.项目启动时，先拉取一次配置，并且添加配置监听器
         String configInfo = nacosConfigManager.getConfigService()
@@ -50,6 +50,10 @@ public class DynamicRouteLoader {
         updateConfigInfo(configInfo);
     }
 
+    /**
+     * 监听到配置信息变更，更新路由表
+     * @param configInfo
+     */
     public void updateConfigInfo(String configInfo){
         log.debug("监听到路由配置信息：{}", configInfo);
         // 1.解析配置信息，转为RouteDefinition
@@ -64,7 +68,7 @@ public class DynamicRouteLoader {
         // 3.更新路由表
         for (RouteDefinition routeDefinition : routeDefinitions) {
             // 3.1.更新路由表
-            writer.save(Mono.just(routeDefinition)).subscribe();
+            writer.save(Mono.just(routeDefinition)).subscribe(); // 保存路由，subscribe()用于订阅，等待保存完成
             // 3.2.记录路由id，便于下一次更新时删除
             routeIds.add(routeDefinition.getId());
         }

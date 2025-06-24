@@ -11,8 +11,8 @@ feign:
 #  sentinel:
 #    enabled: true
 hm:
-  cart:
-    max-items: 100 # 添加maxItems属性并设置默认值为100
+#  cart:
+#    max-items: 100 # 添加maxItems属性并设置默认值为100
   db:
     database: hm-cart
   swagger:

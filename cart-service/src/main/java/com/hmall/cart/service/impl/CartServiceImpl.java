@@ -145,6 +145,10 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
         remove(queryWrapper);
     }
 
+    /**
+     * 检查购物车是否已满
+     * @param userId
+     */
     private void checkCartsFull(Long userId) {
         int count = Math.toIntExact(lambdaQuery().eq(Cart::getUserId, userId).count()); // 这里不能用count()，因为count()会触发lazy loading，导致懒加载的对象不一定是最新的
         if (count >= cartProperties.getMaxItems()) {
@@ -152,6 +156,13 @@ public class CartServiceImpl extends ServiceImpl<CartMapper, Cart> implements IC
                     StrUtil.format("用户购物车课程不能超过{}", cartProperties.getMaxItems()));
         }
     }
+
+    /**
+     * 检查购物车中是否已经存在该商品
+     * @param itemId
+     * @param userId
+     * @return
+     */
 
     private boolean checkItemExists(Long itemId, Long userId) {
         int count = Math.toIntExact(lambdaQuery()

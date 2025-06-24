@@ -106,7 +106,7 @@
       "name": "hm.db.database",
       "type": "java.lang.String",
       "description": "数据库database名",
-      "defaultValue": ""
+      "defaultValue": "hm-db"
     },
     {
       "name": "hm.db.un",
