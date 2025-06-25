@@ -1,15 +1,15 @@
 spring:
   application:
     name: trade-service # 微服务名称
-  datasource:
-    url: jdbc:mysql://${hm.db.host}:3307/hm-trade?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
-    username: root
-    password: 123
+#  datasource:
+#    url: jdbc:mysql://${hm.db.host}:3307/hm-trade?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+#    username: root
+#    password: 123
   profiles:
     active: dev
   cloud:
     nacos:
-      server-addr: 192.168.100.128:8848
+      server-addr: 192.168.100.128
       config:
         file-extension: yaml
         shared-configs:

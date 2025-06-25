@@ -19,6 +19,10 @@ public class OrderDelayMessageListener {
     private final IOrderService orderService;
     private final PayClient payClient;
 
+    /**
+     * 监听延迟队列，订单支付成功后，修改订单状态
+     * @param orderId
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = MQConstants.DELAY_ORDER_QUEUE_NAME),
             exchange = @Exchange(name = MQConstants.DELAY_EXCHANGE_NAME, delayed = "true"),

@@ -8,7 +8,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
 @Configuration
-@ConditionalOnClass(RabbitTemplate.class)
+@ConditionalOnClass(RabbitTemplate.class) //有RabbitTemplate类时，才加载该类
 public class MqConfig {
 
     @Bean

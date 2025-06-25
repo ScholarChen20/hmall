@@ -41,10 +41,15 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     private final ItemClient itemClient;
     private final IOrderDetailService detailService;
     private final CartClient cartClient;
-    private final RabbitTemplate rabbitTemplate;
+    private final RabbitTemplate rabbitTemplate; // RabbitMQ模板
 
+    /**
+     * 创建订单
+     * @param orderFormDTO
+     * @return
+     */
     @Override
-    @GlobalTransactional
+    @GlobalTransactional // 开启全局事务,XT模式
     public Long createOrder(OrderFormDTO orderFormDTO) {
         // 1.订单数据
         Order order = new Order();
@@ -99,6 +104,10 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         return order.getId();
     }
 
+    /**
+     * 订单支付成功
+     * @param orderId
+     */
     @Override
     public void markOrderPaySuccess(Long orderId) {
         Order order = new Order();
@@ -115,10 +124,17 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
         // TODO 恢复库存
     }
 
+    /**
+     * 构建订单详情
+     * @param orderId
+     * @param items
+     * @param numMap
+     * @return
+     */
     private List<OrderDetail> buildDetails(Long orderId, List<ItemDTO> items, Map<Long, Integer> numMap) {
-        List<OrderDetail> details = new ArrayList<>(items.size());
-        for (ItemDTO item : items) {
-            OrderDetail detail = new OrderDetail();
+        List<OrderDetail> details = new ArrayList<>(items.size()); // 创建一个集合，用于存储订单详情
+        for (ItemDTO item : items) { // 遍历商品列表
+            OrderDetail detail = new OrderDetail(); // 创建一个订单详情对象
             detail.setName(item.getName());
             detail.setSpec(item.getSpec());
             detail.setPrice(item.getPrice());

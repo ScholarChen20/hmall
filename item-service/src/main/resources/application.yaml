@@ -1,5 +1,10 @@
 server:
   port: 8081
+feign:
+  okhttp:
+    enabled: true # 开启OKHttp连接池支持
+  sentinel:
+    enabled: true # 开启Feign对Sentinel的整合
 hm:
   db:
     database: hm-item
@@ -7,14 +12,14 @@ hm:
     title: "黑马商城商品服务接口文档"
     package: com.hmall.item.controller
 
-spring:
-  application:
-    name: item-service
-  datasource:
-    url: jdbc:mysql://${hm.db.host}:3307/hm-item?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
-    driver-class-name: com.mysql.cj.jdbc.Driver
-    username: root
-    password: ${hm.db.pw}
-  cloud:
-    nacos:
-      server-addr: 192.168.100.128:8848
+#spring:
+#  application:
+#    name: item-service
+#  datasource:
+#    url: jdbc:mysql://${hm.db.host}:3307/hm-item?useUnicode=true&characterEncoding=UTF-8&autoReconnect=true&serverTimezone=Asia/Shanghai
+#    driver-class-name: com.mysql.cj.jdbc.Driver
+#    username: root
+#    password: ${hm.db.pw}
+#  cloud:
+#    nacos:
+#      server-addr: 192.168.100.128:8848

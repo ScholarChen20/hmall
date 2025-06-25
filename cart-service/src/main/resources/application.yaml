@@ -8,8 +8,8 @@ server:
 feign:
   okhttp:
     enabled: true
-#  sentinel:
-#    enabled: true
+  sentinel:
+    enabled: true
 hm:
 #  cart:
 #    max-items: 100 # 添加maxItems属性并设置默认值为100
@@ -24,5 +24,16 @@ spring:
       transport:
         dashboard: localhost:8090 # sentinel的控制台地址
       http-method-specify: true # 是否设置请求方式作为资源名称
-  seata:
-    enabled: false # 禁用Seata以避免未配置导致的问题
+#  seata:
+#    enabled: false # 禁用Seata以避免未配置导致的问题
+
+
+#  docker run --name seata \
+#  -p 8099:8099 \
+#  -p 7099:7099 \
+#  -e SEATA_IP=192.168.100.128 \
+#  -v ./seata:/seata-server/resources \
+#  --privileged=true \
+#  --network hm-net \
+#  -d \
+#  seataio/seata-server:1.5.2

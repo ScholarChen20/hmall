@@ -75,6 +75,12 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
         }*/
     }
 
+    /**
+     * 修改支付单状态为支付成功
+     * @param id
+     * @param successTime
+     * @return
+     */
     public boolean markPayOrderSuccess(Long id, LocalDateTime successTime) {
         return lambdaUpdate()
                 .set(PayOrder::getStatus, PayStatus.TRADE_SUCCESS.getValue())
@@ -85,7 +91,17 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
                 .update();
     }
 
-
+    /**
+     * 幂等性校验
+     * 1.查询支付单
+     * 2.判断是否存在
+     * 3.判断是否支付成功
+     * 4.判断是否已经关闭
+     * 5.判断支付渠道是否一致······
+     * 6.返回结果
+     * @param applyDTO
+     * @return
+     */
     private PayOrder checkIdempotent(PayApplyDTO applyDTO) {
         // 1.首先查询支付单
         PayOrder oldOrder = queryByBizOrderNo(applyDTO.getBizOrderNo());
@@ -121,6 +137,13 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
         return oldOrder;
     }
 
+    /**
+     * 构建支付单
+     * 1.数据转换
+     * 2.初始化数据
+     * @param payApplyDTO
+     * @return
+     */
     private PayOrder buildPayOrder(PayApplyDTO payApplyDTO) {
         // 1.数据转换
         PayOrder payOrder = BeanUtils.toBean(payApplyDTO, PayOrder.class);

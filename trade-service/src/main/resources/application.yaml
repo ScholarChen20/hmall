@@ -1,5 +1,10 @@
 server:
   port: 8085
+feign:
+  okhttp:
+    enabled: true # 开启OKHttp连接池支持
+  sentinel:
+    enabled: true # 开启Feign对Sentinel的整合
 hm:
   db:
     database: hm-trade
@@ -13,3 +18,13 @@ spring:
     virtual-host: /hmall
     username: hmall
     password: 123
+#    connection-timeout: 1s  # 连接超时时间,1s
+#    publisher-confirm-type: correlated  # 发布确认类型
+#    publisher-returns: true  # 开启发布确认
+#    template:
+#      retry:
+#        enabled: true    # 开启重试机制
+#        max-attempts: 3  # 最大重试次数
+#        initial-interval: 1000 # 第一次重试间隔,1s
+#        multiplier: 1.5  # 间隔递增倍数
+#        max-interval: 10000 # 最大重试间隔,10s

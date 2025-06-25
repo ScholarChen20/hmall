@@ -6,7 +6,8 @@ import org.springframework.cloud.openfeign.FeignClient;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 
-@FeignClient(value = "pay-service", fallbackFactory = PayClientFallback.class)
+// 声明FeignClient，指定服务名，指定fallbackFactory
+@FeignClient(value = "pay-service", fallbackFactory = PayClientFallback.class) // 服务名
 public interface PayClient {
     /**
      * 根据交易订单id查询支付单
