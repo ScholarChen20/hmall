@@ -369,9 +369,6 @@ AT模式同样是分阶段提交的事务模型，不过缺弥补了XA模型中�
 ## RabbitMQ--异步调用
 RabbitMQ对应的架构如图：<br>
 
-<div align=center>
-<img src="./image/rabbitmq.png" width="500" /><br>
-</div>
 
 其中包含几个概念：
 - publisher：生产者，也就是发送消息的一方
