@@ -6,6 +6,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @FeignClient("user-service")
 public interface UserClient {
+    /// 扣减用户余额
     @PutMapping("/users/money/deduct")
     void deductMoney(@RequestParam("pw") String pw, @RequestParam("amount") Integer amount);
 }

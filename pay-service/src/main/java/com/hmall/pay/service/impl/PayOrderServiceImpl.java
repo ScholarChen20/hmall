@@ -41,6 +41,11 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
 
     private final RabbitTemplate rabbitTemplate;
 
+    /**
+     * 申请支付单, 幂等性校验
+     * @param applyDTO
+     * @return
+     */
     @Override
     public String applyPayOrder(PayApplyDTO applyDTO) {
         // 1.幂等性校验
@@ -49,6 +54,10 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
         return payOrder.getId().toString();
     }
 
+    /**
+     * 尝试使用余额支付, 如果成功，修改支付单状态为支付成功，修改订单状态为支付成功
+     * @param payOrderFormDTO
+     */
     @Override
     @Transactional
     public void tryPayOrderByBalance(PayOrderFormDTO payOrderFormDTO) {
@@ -83,11 +92,11 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
      */
     public boolean markPayOrderSuccess(Long id, LocalDateTime successTime) {
         return lambdaUpdate()
-                .set(PayOrder::getStatus, PayStatus.TRADE_SUCCESS.getValue())
+                .set(PayOrder::getStatus, PayStatus.TRADE_SUCCESS.getValue()) //set方法表示 设定某个字段的值
                 .set(PayOrder::getPaySuccessTime, successTime)
                 .eq(PayOrder::getId, id)
                 // 支付状态的乐观锁判断
-                .in(PayOrder::getStatus, PayStatus.NOT_COMMIT.getValue(), PayStatus.WAIT_BUYER_PAY.getValue())
+                .in(PayOrder::getStatus, PayStatus.NOT_COMMIT.getValue(), PayStatus.WAIT_BUYER_PAY.getValue())  // in方法表示 某个字段的值在某个集合中
                 .update();
     }
 
@@ -124,13 +133,13 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
             throw new BizIllegalException("订单已关闭");
         }
         // 5.旧单已经存在，判断支付渠道是否一致
-        if (!StringUtils.equals(oldOrder.getPayChannelCode(), applyDTO.getPayChannelCode())) {
+        if (!StringUtils.equals(oldOrder.getPayChannelCode(), applyDTO.getPayChannelCode())) { //判断支付渠道编码是否一致
             // 支付渠道不一致，需要重置数据，然后重新申请支付单
             PayOrder payOrder = buildPayOrder(applyDTO);
             payOrder.setId(oldOrder.getId());
-            payOrder.setQrCodeUrl("");
+            payOrder.setQrCodeUrl(""); // 清空二维码url
             updateById(payOrder);
-            payOrder.setPayOrderNo(oldOrder.getPayOrderNo());
+            payOrder.setPayOrderNo(oldOrder.getPayOrderNo()); // 设置支付单号
             return payOrder;
         }
         // 6.旧单已经存在，且可能是未支付或未提交，且支付渠道一致，直接返回旧数据
@@ -153,9 +162,15 @@ public class PayOrderServiceImpl extends ServiceImpl<PayOrderMapper, PayOrder> i
         payOrder.setBizUserId(UserContext.getUser());
         return payOrder;
     }
+
+    /**
+     * 根据业务订单号查询支付单
+     * @param bizOrderNo
+     * @return
+     */
     public PayOrder queryByBizOrderNo(Long bizOrderNo) {
         return lambdaQuery()
-                .eq(PayOrder::getBizOrderNo, bizOrderNo)
-                .one();
+                .eq(PayOrder::getBizOrderNo, bizOrderNo) // eq方法表示 某个字段的值等于某个值
+                .one(); // one方法表示 查询一条数据
     }
 }

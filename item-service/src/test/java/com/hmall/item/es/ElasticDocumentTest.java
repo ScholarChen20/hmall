@@ -27,13 +27,17 @@ import org.springframework.boot.test.context.SpringBootTest;
 import java.io.IOException;
 import java.util.List;
 
-@SpringBootTest(properties = "spring.profiles.active=local")
+@SpringBootTest(properties = "spring.profiles.active=local") // 指定环境，测试类，启动类
 public class ElasticDocumentTest {
 
-    private RestHighLevelClient client;
+    private RestHighLevelClient client; // EsClient
     @Autowired
     private IItemService itemService;
 
+    /**
+     * 创建索引
+     * @throws IOException
+     */
     @Test
     void testIndexDoc() throws IOException {
         // 0.准备文档数据
@@ -45,7 +49,7 @@ public class ElasticDocumentTest {
         itemDoc.setPrice(29900);
 
         // 1.准备Request
-        IndexRequest request = new IndexRequest("items").id(itemDoc.getId());
+        IndexRequest request = new IndexRequest("items").id(itemDoc.getId()); //item.getId().toString()普通类型转为String类型
         // 2.准备请求参数
         request.source(JSONUtil.toJsonStr(itemDoc), XContentType.JSON);
         // 3.发送请求
@@ -53,6 +57,10 @@ public class ElasticDocumentTest {
         System.out.println("resp = " + resp);
     }
 
+    /**
+     * 查询文档
+     * @throws IOException
+     */
     @Test
     void testGetDoc() throws IOException {
         // 1.准备Request
@@ -65,6 +73,10 @@ public class ElasticDocumentTest {
         System.out.println("doc = " + doc);
     }
 
+    /**
+     * 删除文档
+     * @throws IOException
+     */
     @Test
     void testDeleteDoc() throws IOException {
         // 1.准备Request
@@ -73,6 +85,10 @@ public class ElasticDocumentTest {
         client.delete(request, RequestOptions.DEFAULT);
     }
 
+    /**
+     * 更新文档
+     * @throws IOException
+     */
     @Test
     void testUpdateDoc() throws IOException {
         // 1.准备Request
@@ -85,6 +101,10 @@ public class ElasticDocumentTest {
         client.update(request, RequestOptions.DEFAULT);
     }
 
+    /**
+     * 批量插入文档
+     * @throws IOException
+     */
     @Test
     void testBulkDoc() throws IOException {
         int pageNo = 1, pageSize = 500;
@@ -113,12 +133,20 @@ public class ElasticDocumentTest {
         }
     }
 
+    /**
+     * 创建EsClient, 连接到Es集群
+     */
     @BeforeEach
     void setUp() {
         client = new RestHighLevelClient(RestClient.builder(
-                HttpHost.create("http://192.168.150.101:9200")
+                HttpHost.create("http://192.168.100.128:9200")
         ));
     }
+
+    /**
+     * 关闭EsClient
+     * @throws IOException
+     */
 
     @AfterEach
     void tearDown() throws IOException {

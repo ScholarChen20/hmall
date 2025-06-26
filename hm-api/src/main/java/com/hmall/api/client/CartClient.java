@@ -10,4 +10,7 @@ import java.util.Collection;
 public interface CartClient {
     @DeleteMapping("/carts")
     void deleteCartItemByIds(@RequestParam("ids") Collection<Long> ids);
+
+    @DeleteMapping("/carts/order/{orderId}")
+    void restoreCartItem(Long orderId);
 }

@@ -38,13 +38,13 @@ import java.util.stream.Collectors;
 @RequiredArgsConstructor
 public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements IOrderService {
 
-    private final ItemClient itemClient;
+    private final ItemClient itemClient; // 商品服务
     private final IOrderDetailService detailService;
     private final CartClient cartClient;
     private final RabbitTemplate rabbitTemplate; // RabbitMQ模板
 
     /**
-     * 创建订单
+     * 创建订单,并扣减库存、删除购物车商品
      * @param orderFormDTO
      * @return
      */
@@ -93,11 +93,11 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
 
         // 5.发送延迟消息，检测订单支付状态
         rabbitTemplate.convertAndSend(
-                MQConstants.DELAY_EXCHANGE_NAME,
-                MQConstants.DELAY_ORDER_KEY,
+                MQConstants.DELAY_EXCHANGE_NAME, // 交换机名
+                MQConstants.DELAY_ORDER_KEY, // 路由键
                 order.getId(),
-                message -> {
-                    message.getMessageProperties().setDelay(10000);
+                message -> { // 设置延迟时间
+                    message.getMessageProperties().setDelay(10000); // 延迟10秒
                     return message;
                 });
 
@@ -112,16 +112,33 @@ public class OrderServiceImpl extends ServiceImpl<OrderMapper, Order> implements
     public void markOrderPaySuccess(Long orderId) {
         Order order = new Order();
         order.setId(orderId);
-        order.setStatus(2);
+        order.setStatus(2); // 已支付
         order.setPayTime(LocalDateTime.now());
         updateById(order);
     }
 
+    /**
+     * 取消订单
+     * 1.标记订单为已关闭
+     * 2.恢复库存
+     * 3.恢复购物车
+     * 4.发送延迟消息，检测订单关闭状态
+     * @param orderId
+     */
     @Override
     public void cancelOrder(Long orderId) {
-        // TODO 标记订单为已关闭
-
-        // TODO 恢复库存
+        //  标记订单为已关闭
+        Order order = new Order();
+        order.setId(orderId);
+        order.setStatus(3); // 已关闭
+        order.setCloseTime(LocalDateTime.now()); // 关闭时间
+        updateById(order);
+        //  恢复库存
+        itemClient.restoreStock(orderId);
+        //  恢复购物车
+        cartClient.restoreCartItem(orderId);
+        //  发送延迟消息，检测订单关闭状态
+        rabbitTemplate.convertAndSend(MQConstants.DELAY_EXCHANGE_NAME, MQConstants.DELAY_ORDER_KEY, orderId);
     }
 
     /**

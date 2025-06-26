@@ -15,6 +15,10 @@ public class PayStatusListener {
 
     private final IOrderService orderService;
 
+    /**
+     * 监听支付成功的消息，修改订单状态为已支付
+     * @param orderId
+     */
     @RabbitListener(bindings = @QueueBinding(
             value = @Queue(name = "trade.pay.success.queue", durable = "true"),
             exchange = @Exchange(name = "pay.direct"),

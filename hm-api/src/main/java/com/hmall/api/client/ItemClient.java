@@ -11,12 +11,18 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 import java.util.Collection;
 import java.util.List;
-
-@FeignClient(value = "item-service", fallbackFactory = ItemClientFallbackFactory.class)
+//FeignClient注解，声明调用的服务名，并指定fallbackFactory为ItemClientFallbackFactory.class,表示使用ItemClientFallbackFactory.class类创建fallback对象。
+@FeignClient(value = "item-service", fallbackFactory = ItemClientFallbackFactory.class) // 调用item-service服务
 public interface ItemClient {
+    // 查询商品详情
     @GetMapping("/items")
     List<ItemDTO> queryItemByIds(@RequestParam("ids")Collection<Long> ids);
 
+    // 扣减库存
     @PutMapping("/items/stock/deduct")
     void deductStock(@RequestBody List<OrderDetailDTO> items);
+
+    // 回滚库存
+    @PutMapping("/items/stock/restore")
+    void restoreStock(Long orderId);
 }

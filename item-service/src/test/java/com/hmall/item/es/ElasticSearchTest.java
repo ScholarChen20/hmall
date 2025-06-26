@@ -30,6 +30,10 @@ public class ElasticSearchTest {
 
     private RestHighLevelClient client;
 
+    /**
+     * 测试match_all查询
+     * @throws IOException
+     */
     @Test
     void testMatchAll() throws IOException {
         // 1.创建request对象
@@ -44,6 +48,10 @@ public class ElasticSearchTest {
         parseResponseResult(response);
     }
 
+    /**
+     *  测试match查询
+     * @throws IOException
+     */
     @Test
     void testSearch() throws IOException {
         // 1.创建request对象

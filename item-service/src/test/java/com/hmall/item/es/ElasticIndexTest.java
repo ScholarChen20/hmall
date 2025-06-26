@@ -23,6 +23,10 @@ public class ElasticIndexTest {
         System.out.println("client = " + client);
     }
 
+    /**
+     * 创建索引, 如果索引已经存在，则创建失败
+     * @throws IOException
+     */
     @Test
     void testCreateIndex() throws IOException {
         // 1.准备Request对象
@@ -33,6 +37,10 @@ public class ElasticIndexTest {
         client.indices().create(request, RequestOptions.DEFAULT);
     }
 
+    /**
+     * 判断索引是否存在
+     * @throws IOException
+     */
     @Test
     void testGetIndex() throws IOException {
         // 1.准备Request对象
@@ -42,6 +50,10 @@ public class ElasticIndexTest {
         System.out.println("exists = " + exists);
     }
 
+    /**
+     * 删除索引
+     * @throws IOException
+     */
     @Test
     void testDeleteIndex() throws IOException {
         // 1.准备Request对象
@@ -50,13 +62,20 @@ public class ElasticIndexTest {
         client.indices().delete(request, RequestOptions.DEFAULT);
     }
 
+    /**
+     * 初始化客户端
+     */
     @BeforeEach
     void setUp() {
         client = new RestHighLevelClient(RestClient.builder(
-                HttpHost.create("http://192.168.150.101:9200")
+                HttpHost.create("http://192.168.100.128:9200") // 集群地址，集群多个节点用逗号分隔
         ));
     }
 
+    /**
+     * 关闭客户端
+     * @throws IOException
+     */
     @AfterEach
     void tearDown() throws IOException {
         if (client != null) {
