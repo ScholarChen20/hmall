@@ -4,10 +4,7 @@ import com.hmall.api.client.fallback.ItemClientFallbackFactory;
 import com.hmall.api.dto.ItemDTO;
 import com.hmall.api.dto.OrderDetailDTO;
 import org.springframework.cloud.openfeign.FeignClient;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Collection;
 import java.util.List;
@@ -25,4 +22,12 @@ public interface ItemClient {
     // 回滚库存
     @PutMapping("/items/stock/restore")
     void restoreStock(Long orderId);
+
+    /**
+     * 根据ID查询商品详情
+     * @param id
+     * @return
+     */
+    @GetMapping("/items/{id}")
+    ItemDTO queryItemById(@PathVariable("id") Long id);
 }

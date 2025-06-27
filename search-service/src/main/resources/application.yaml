@@ -1,0 +1,23 @@
+server:
+  port: 8087
+#spring:
+#  cloud:
+#    sentinel:
+#      transport:
+#        dashboard: 192.168.100.128:8090
+#      http-method-specify: true #开启请求方式加前缀
+debug: true
+
+hm:
+  db:
+    database: hm-item
+  swagger:
+    title: "黑马商城商品搜索接口文档"
+    desc: "黑马商城商品搜索接口文档"
+    package: com.hmall.search.controller
+#  mq:
+#    host: 192.168.100.128
+#    port: 5672
+#    vhost: /hmall
+#    un: hmall
+#    pw: 123

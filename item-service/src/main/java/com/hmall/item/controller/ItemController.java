@@ -7,11 +7,13 @@ import com.hmall.api.dto.OrderDetailDTO;
 import com.hmall.common.domain.PageDTO;
 import com.hmall.common.domain.PageQuery;
 import com.hmall.common.utils.BeanUtils;
+import com.hmall.common.utils.RabbitMqHelper;
 import com.hmall.item.domain.po.Item;
 import com.hmall.item.service.IItemService;
 import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import lombok.RequiredArgsConstructor;
+import org.springframework.amqp.rabbit.core.RabbitTemplate;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -21,6 +23,8 @@ import java.util.List;
 @RequestMapping("/items")
 @RequiredArgsConstructor
 public class ItemController {
+
+    private final RabbitTemplate rabbitTemplate;
 
     private final IItemService itemService;
 
@@ -52,8 +56,11 @@ public class ItemController {
     @ApiOperation("新增商品")
     @PostMapping
     public void saveItem(@RequestBody ItemDTO item) {
+        Item bean = BeanUtils.copyBean(item, Item.class);
         // 新增
-        itemService.save(BeanUtils.copyBean(item, Item.class));
+        boolean save = itemService.save(bean);
+        System.out.println("表单： "+bean+"结果： "+save);
+        rabbitTemplate.convertAndSend("search.direct", "item.index",bean.getId()); // 搜索服务更新索引
     }
 
     @ApiOperation("更新商品状态")
@@ -63,6 +70,7 @@ public class ItemController {
         item.setId(id);
         item.setStatus(status);
         itemService.updateById(item);
+        rabbitTemplate.convertAndSend("search.direct", "item.updateStatus",id); // 发送消息通知搜索服务更新商品状态
     }
 
     @ApiOperation("更新商品")
@@ -72,12 +80,14 @@ public class ItemController {
         item.setStatus(null);
         // 更新
         itemService.updateById(BeanUtils.copyBean(item, Item.class));
+        rabbitTemplate.convertAndSend("search.direct", "item.update",item.getId()); // 搜索服务更新索引
     }
 
     @ApiOperation("根据id删除商品")
     @DeleteMapping("{id}")
     public void deleteItemById(@PathVariable("id") Long id) {
         itemService.removeById(id);
+        rabbitTemplate.convertAndSend("search.direct", "item.delete",id);// 搜索服务删除索引
     }
 
     @ApiOperation("批量扣减库存")
