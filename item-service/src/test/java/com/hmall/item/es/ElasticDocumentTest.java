@@ -34,6 +34,23 @@ public class ElasticDocumentTest {
     @Autowired
     private IItemService itemService;
 
+
+    @Test
+    void testAddDocument() throws IOException {
+        // 1.根据id查询商品数据
+        Item item = itemService.getById(100002644680L);
+        // 2.转换为文档类型
+        ItemDoc itemDoc = BeanUtil.copyProperties(item, ItemDoc.class);
+        // 3.将ItemDTO转json
+        String doc = JSONUtil.toJsonStr(itemDoc);
+
+        // 1.准备Request对象
+        IndexRequest request = new IndexRequest("items").id(itemDoc.getId());
+        // 2.准备Json文档
+        request.source(doc, XContentType.JSON);
+        // 3.发送请求
+        client.index(request, RequestOptions.DEFAULT);
+    }
     /**
      * 创建索引
      * @throws IOException
@@ -42,7 +59,7 @@ public class ElasticDocumentTest {
     void testIndexDoc() throws IOException {
         // 0.准备文档数据
         // 0.1.根据id查询数据库数据
-        Item item = itemService.getById(100000011127L);
+        Item item = itemService.getById(100002644680L);
         // 0.2.把数据库数据转为文档数据
         ItemDoc itemDoc = BeanUtil.copyProperties(item, ItemDoc.class);
 
@@ -64,7 +81,7 @@ public class ElasticDocumentTest {
     @Test
     void testGetDoc() throws IOException {
         // 1.准备Request
-        GetRequest request = new GetRequest("items", "100000011127");
+        GetRequest request = new GetRequest("items").id("100002644680");
         // 2.发送请求
         GetResponse response = client.get(request, RequestOptions.DEFAULT);
         // 3.解析响应结果
@@ -80,7 +97,7 @@ public class ElasticDocumentTest {
     @Test
     void testDeleteDoc() throws IOException {
         // 1.准备Request
-        DeleteRequest request = new DeleteRequest("items", "100000011127");
+        DeleteRequest request = new DeleteRequest("items", "100002644680");
         // 2.发送请求
         client.delete(request, RequestOptions.DEFAULT);
     }
@@ -92,7 +109,7 @@ public class ElasticDocumentTest {
     @Test
     void testUpdateDoc() throws IOException {
         // 1.准备Request
-        UpdateRequest request = new UpdateRequest("items", "100000011127");
+        UpdateRequest request = new UpdateRequest("items", "100002644680");
         // 2.准备请求参数
         request.doc(
                 "price", 25600
@@ -119,7 +136,7 @@ public class ElasticDocumentTest {
             }
 
             // 2.准备Request
-            BulkRequest request = new BulkRequest();
+            BulkRequest request = new BulkRequest();  //blukRequest批量请求
             // 3.准备请求参数
             for (Item item : records) {
                 request.add(new IndexRequest("items")

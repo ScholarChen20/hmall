@@ -70,7 +70,7 @@ public class ItemController {
         item.setId(id);
         item.setStatus(status);
         itemService.updateById(item);
-        rabbitTemplate.convertAndSend("search.direct", "item.updateStatus",id); // 发送消息通知搜索服务更新商品状态
+//        rabbitTemplate.convertAndSend("search.direct", "item.updateStatus",id); // 发送消息通知搜索服务更新商品状态
     }
 
     @ApiOperation("更新商品")

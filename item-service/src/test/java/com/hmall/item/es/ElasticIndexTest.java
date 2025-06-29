@@ -18,6 +18,9 @@ public class ElasticIndexTest {
 
     private RestHighLevelClient client;
 
+    /**
+     * 测试链接
+     */
     @Test
     void testConnection() {
         System.out.println("client = " + client);

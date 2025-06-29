@@ -70,6 +70,10 @@ public class ElasticSearchTest {
         parseResponseResult(response);
     }
 
+    /**
+     * 测试排序和分页
+     * @throws IOException
+     */
     @Test
     void testSortAndPage() throws IOException {
         // 0.模拟前段传递的分页参数
@@ -93,6 +97,10 @@ public class ElasticSearchTest {
         parseResponseResult(response);
     }
 
+    /**
+     * 测试高亮
+     * @throws IOException
+     */
     @Test
     void testHighlight() throws IOException {
         // 1.创建request对象
@@ -111,6 +119,10 @@ public class ElasticSearchTest {
         parseResponseResult(response);
     }
 
+    /**
+     * 测试聚合
+     * @throws IOException
+     */
     @Test
     void testAgg() throws IOException {
         // 1.创建request对象
@@ -135,12 +147,16 @@ public class ElasticSearchTest {
         // 4.2.获取buckets
         List<? extends Terms.Bucket> buckets = brandTerms.getBuckets();
         // 4.3.遍历获取每一个bucket
-        for (Terms.Bucket bucket : buckets) {
+        for (Terms.Bucket bucket : buckets) { //遍历key获取品牌信息
             System.out.println("brand: " + bucket.getKeyAsString());
             System.out.println("count: " + bucket.getDocCount());
         }
     }
 
+    /**
+     * 解析结果,处理高亮结果，聚合结果
+     * @param response
+     */
     private static void parseResponseResult(SearchResponse response) {
         SearchHits searchHits = response.getHits();
         // 4.1.总条数
@@ -166,12 +182,20 @@ public class ElasticSearchTest {
         }
     }
 
+    /**
+     * 初始化ES客户端
+     */
     @BeforeEach
     void setUp() {
         client = new RestHighLevelClient(RestClient.builder(
-                HttpHost.create("http://192.168.150.101:9200")
+                HttpHost.create("http://192.168.100.128:9200")
         ));
     }
+
+    /**
+     * 关闭ES客户端
+     * @throws IOException
+     */
 
     @AfterEach
     void tearDown() throws IOException {

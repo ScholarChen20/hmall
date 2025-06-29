@@ -7,9 +7,11 @@ import com.hmall.search.domain.po.Item;
 import com.hmall.search.domain.po.ItemDoc;
 import com.hmall.search.domain.vo.CategoryAndBrandVo;
 
+import java.io.IOException;
+
 public interface ISearchService extends IService<Item> {
 
-    PageDTO<ItemDoc> EsSearch(com.hmall.search.domain.query.ItemPageQuery query);
+    PageDTO<ItemDoc> EsSearch(com.hmall.search.domain.query.ItemPageQuery query) throws IOException;
 
     CategoryAndBrandVo getFilters(com.hmall.search.domain.query.ItemPageQuery query);
 }
